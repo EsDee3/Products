@@ -1,0 +1,25 @@
+{
+  "name": "products",
+  "version": "1.0.0",
+  "description": "system design capstone products API",
+  "main": "/index.js",
+  "scripts": {
+    "test": "test",
+    "live-server": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EsDee3/Products.git"
+  },
+  "author": "Ting-Yu Chen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EsDee3/Products/issues"
+  },
+  "homepage": "https://github.com/EsDee3/Products#readme",
+  "dependencies": {
+    "fastify": "^3.15.1",
+    "nodemon": "^2.0.7",
+    "postgres": "^1.0.2"
+  }
+}
