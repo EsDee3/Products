@@ -36,13 +36,17 @@ module.exports = {
     const currentQty = await query.getQuantities(skusArray);
 
     for (let i = 0; i < currentQty.length; i++) {
-      currentQty[i].sku
+      let quantity = currentQty[i].quantity - skus[currentQty[i].sku];
+      newQty[currentQty[i].sku] = quantity >=0 ? quantity: 0;
     }
 
-    // return await sql`
-    //   UPDATE skus SET ${
-    //     sql(cartArray, 'quantity')
-    //   } WHERE sku=${cartArray.sku}
-    // `
+    let cartArray = [];
+
+    for (let prop in newQty) {
+      let obj = {sku: prop, quantity: newQty[prop]};
+      cartArray.push(obj);
+    }
+
+    return await query.updateInventory(cartArray);
   }
 }

@@ -5,7 +5,15 @@ const Cursor = require('pg-cursor')
 const url = 'mongodb://localhost:27017';
 const dbName = 'sdc';
 
-const text = `WITH styles_agg AS (
+const relatedQuery = `
+  SELECT
+    pid AS _id,
+    array_agg(related_id) AS related
+  FROM related
+  GROUP BY pid
+`;
+
+const prodQuery = `WITH styles_agg AS (
   SELECT
     pid,
     style_id,
@@ -59,8 +67,7 @@ const text = `WITH styles_agg AS (
 ) SELECT
     pid AS _id,
     product,
-    styles,
-    related
+    styles
   FROM products p
   LEFT JOIN LATERAL (
     SELECT json_build_object(
@@ -85,11 +92,7 @@ const text = `WITH styles_agg AS (
     FROM styles_agg sa
     WHERE sa.pid = p.pid
   ) styles ON true
-  LEFT JOIN LATERAL (
-    SELECT array_agg(r.related_id) AS related
-    FROM related r
-    WHERE r.pid = p.pid
-  ) related ON true`;
+`;
 
 (async function() {
   const mgClient = new MongoClient(url, { useUnifiedTopology: true });
@@ -108,27 +111,32 @@ const text = `WITH styles_agg AS (
     const pgClient = await pgPool.connect();
     console.log('pg client connected');
 
-    const cursor = pgClient.query(new Cursor(text))
+    const prodCursor = pgClient.query(new Cursor(prodQuery));
+    const relatedCursor = pgClient.query(new Cursor(relatedQuery));
 
-    const readToEnd = () => {
-      cursor.read(100, async (err, rows) => {
+    const readToEnd = (cursor, collection) => {
+      cursor.read(1000, async (err, rows) => {
         if (err) {
           console.log(err);
         }
         if (rows.length > 0) {
-          await db.collection('products').insertMany(rows);
-          readToEnd();
+          await db.collection(collection).insertMany(rows);
+          readToEnd(cursor, collection);
         } else {
           cursor.close();
+          if (collection = 'products') {
+            await db.collection('products').createIndex([{'styles.style_id': 1}, {'styles.skus.sku': 1}])
+          }
           let end = Date.now();
-          console.log(`End: ${String(end)}`)
-          console.log(`Elapsed Time: ${String(end - start)} ms`)
+          console.log(`${collection} end: ${String(end)}`)
+          console.log(`Total Elapsed Time: ${String(end - start)} ms`)
           return;
         }
       })
     }
 
-    await readToEnd();
+    await readToEnd(prodCursor, 'products');
+    await readToEnd(relatedCursor, 'related');
     return;
 
   } catch (err) {

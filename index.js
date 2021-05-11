@@ -5,7 +5,7 @@ const path = require('path');
 const pgRoutes = './postgres';
 const mgRoutes = './mongo';
 
-const routes = pgRoutes;
+const routes = pgRoutes; // CHANGE THIS TO CHANGE DB
 
 const server = fastify({logger: false});
 
@@ -13,43 +13,6 @@ server.register(autoload, {
   dir: path.join(__dirname, routes)
 });
 
-
-
-
-// ROUTE ////////////////////////////////////////
-// fastify.get('/:pid', route.getProduct);
-
-// fastify.get('/related/:pid', route.getRelated);
-
-// fastify.put('/cart', route.updateInventory);
-
-
-//   const mgController = require('./mongo/controllers');
-
-//   fastify.register(require('fastify-mongodb'), {
-//     // force to close the mongodb connection when app stopped
-//     // the default value is false
-//     forceClose: true,
-
-//     url: 'mongodb://localhost:27017/sdc'
-//   })
-
-
-//   fastify.get('/related/:pid', async (req, res) => {
-//     let pid = req.params.pid || 1;
-
-//     try {
-//       const {related} = await pgController.getRelatedData(pid);
-//       return related;
-//     } catch (err) {
-//       fastify.log.error(err)
-//       return err
-//     }
-//   })
-
-
-
-// SERVER START /////////////////////////////////
 server.listen(7763, (err) => {
   if (err) {
     server.log.error(err);

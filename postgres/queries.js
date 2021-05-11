@@ -218,5 +218,22 @@ module.exports = {
       WHERE sku IN (${skusArr})
     `;
     return currentQty;
+  },
+
+  updateInventory: async (cartArray) => {
+    let count = 0;
+    try {
+      for (let i = 0; i < cartArray.length; i++) {
+        await sql`
+          UPDATE skus SET ${sql(cartArray[i], 'quantity')}
+          WHERE sku=${cartArray[i].sku}
+        `;
+        count++;
+      }
+      return `${count} sku quantities updates`;
+    } catch (err) {
+      console.log(err);
+      return err
+    }
   }
 }
