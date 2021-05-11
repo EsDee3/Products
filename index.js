@@ -50,6 +50,33 @@ if (database === 'postgres') {
     url: 'mongodb://localhost:27017/sdc'
   })
 
+  fastify.get('/:pid', async (req, res) => {
+    let pid = req.params.pid || 1;
+
+    const db = this.mongo.db
+    db.collection('products', onCollection)
+
+    const onCollection = (err, col) => {
+      if (err) return reply.send(err)
+
+      col.findOne({ id: pid }, (err, user) => {
+        reply.send(user)
+      })
+    }
+  })
+
+  fastify.get('/related/:pid', async (req, res) => {
+    let pid = req.params.pid || 1;
+
+    try {
+      const {related} = await pgController.getRelatedData(pid);
+      return related;
+    } catch (err) {
+      fastify.log.error(err)
+      return err
+    }
+  })
+
 }
 
 

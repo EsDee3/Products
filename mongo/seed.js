@@ -57,7 +57,7 @@ const text = `WITH styles_agg AS (
     WHERE f.pid = pr.pid
   ) features ON true
 ) SELECT
-    pid AS currentProductId,
+    pid AS _id,
     product,
     styles,
     related
@@ -111,7 +111,7 @@ const text = `WITH styles_agg AS (
     const cursor = pgClient.query(new Cursor(text))
 
     const readToEnd = () => {
-      cursor.read(10, async (err, rows) => {
+      cursor.read(100, async (err, rows) => {
         if (err) {
           console.log(err);
         }
@@ -129,7 +129,6 @@ const text = `WITH styles_agg AS (
     }
 
     await readToEnd();
-    await db.collection('products').createIndex({currentProductId: 1}, null, {unique: true});
     return;
 
   } catch (err) {
