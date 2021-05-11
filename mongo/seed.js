@@ -98,6 +98,9 @@ const text = `WITH styles_agg AS (
   });
 
   try {
+    var start = Date.now();
+    console.log(`Start: ${String(start)}`)
+
     await mgClient.connect();
     console.log(`Connected to ${url}`)
     const db = mgClient.db(dbName);
@@ -112,17 +115,25 @@ const text = `WITH styles_agg AS (
         if (err) {
           console.log(err);
         }
-        console.log(rows);
         if (rows.length > 0) {
           await db.collection('products').insertMany(rows);
           readToEnd();
         } else {
           cursor.close();
+          let end = Date.now();
+          console.log(`End: ${String(end)}`)
+          console.log(`Elapsed Time: ${String(end - start)} ms`)
+          return;
         }
       })
     }
 
+    await readToEnd();
+    await db.collection('products').createIndex({currentProductId: 1}, null, {unique: true});
+    return;
+
   } catch (err) {
     console.log(err.stack);
+    return;
   }
 })();

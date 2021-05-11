@@ -41,6 +41,7 @@ if (database === 'postgres') {
 } else {
 // MONGO ROUTES //////////////////////////////
   const mgController = require('./mongo/controllers');
+
   fastify.register(require('fastify-mongodb'), {
     // force to close the mongodb connection when app stopped
     // the default value is false
@@ -49,11 +50,6 @@ if (database === 'postgres') {
     url: 'mongodb://localhost:27017/sdc'
   })
 
-  fastify.post('/seed', function(req, reply) {
-    const db = this.mongo.db
-
-
-  })
 }
 
 
