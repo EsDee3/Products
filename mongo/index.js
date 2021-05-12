@@ -1,39 +1,43 @@
 const { db } = require('./db');
 
-module.exports = async (server, options) => {
+module.exports = {
+  getProductObj:  async ctx => {
+    let pid = ctx.params.pid || 1;
 
-  server.get('/:pid',  async (request, reply) => {
-    let pid = request.params.pid || 1;
+    try {
 
     const products = await db('sdc').collection('products');
-    return products.findOne({ _id: parseInt(pid) }, (err, data) => {
-      if (err) {
-        return err;
-      } else if (data) {
-        reply.send(data);
-      }
-    });
-  });
+    ctx.body = await products.findOne({ _id: parseInt(pid) });
 
-  server.get('/related/:pid', async (request, reply) => {
-    let pid = request.params.pid || 1;
-
-    const db = server.mongo.db
-    db().collection('products', onCollection)
-
-    const onCollection = (err, col) => {
-      if (err) return reply.send(err);
-
-      col
-        .findOne({ _id: pid })
-        .project({related: 1, _id: 0}, (err, data) => {
-        reply.send(data);
-      })
+    } catch (err) {
+      console.log(err);
+      return err;
     }
-  });
 
-  server.put('/cart', async (request, reply) => {
-    let skus = request.body;
+
+  },
+
+  getRelatedArray: async ctx => {
+    let pid = ctx.params.pid || 1;
+
+    const query = { _id: parseInt(pid) };
+    const options = {
+      projection: { _id: 0, related: 1 }
+    }
+
+    try {
+
+      const products = await db('sdc').collection('products');
+      const { related } = await products.findOne(query, options);
+      ctx.body = related;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  },
+
+  updateSkuQty: async ctx => {
+    let skus = ctx.request.body;
     let skusArray = [];
 
     for (let sku in skus) {
@@ -62,5 +66,5 @@ module.exports = async (server, options) => {
       server.log.error(err)
       return err
     }
-  });
+  }
 }

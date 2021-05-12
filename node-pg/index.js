@@ -1,37 +1,36 @@
-const pgController = require('./controllers')
+const model = require('./model')
 
-module.exports = async (server, options) => {
-  server.get('/:pid', async (req, res) => {
-    let pid = req.params.pid || 1;
+module.exports = {
+  getProductObj: async ctx => {
+    let pid = ctx.params.pid || 1;
 
     try {
-      return await pgController.getOverviewData(pid)
+      ctx.body = await model.getOverviewData(pid)
     } catch (err) {
       server.log.error(err)
       return err
     }
-  });
+  },
 
-  server.get('/related/:pid', async (req, res) => {
-    let pid = req.params.pid || 1;
+  getRelatedArray: async ctx => {
+    let pid = ctx.params.pid || 1;
 
     try {
-      return await pgController.getRelatedData(pid)
+      ctx.body = await model.getRelatedData(pid)
     } catch (err) {
       server.log.error(err)
       return err
     }
-  });
+  },
 
-  server.put('/cart', async (req, res) => {
-    let skus = req.body;
+  updateSkuQty: async ctx => {
+    let skus = ctx.request.body;
 
     try {
-      return await pgController.updateInventory(skus)
+      ctx.body = await model.updateInventory(skus)
     } catch (err) {
       server.log.error(err)
       return err
     }
-  });
-
+  }
 }
