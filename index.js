@@ -5,11 +5,13 @@ const autoload = require('fastify-autoload');
 const path = require('path');
 
 const mgClient = require('./mongo/db');
+const pgPool = require('./postgres/db');
 
 const pgRoutes = './postgres';
 const mgRoutes = './mongo';
+const npRoutes = './node-pg';
 
-const routes = pgRoutes; // CHANGE THIS TO CHANGE DB
+const routes = npRoutes; // CHANGE THIS TO CHANGE DB
 
 const server = fastify({logger: false});
 

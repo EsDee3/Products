@@ -2,25 +2,21 @@ const { db } = require('./db');
 
 module.exports = async (server, options) => {
 
-  server.get('/:pid',  async (req, res) => {
-    let pid = req.params.pid || 1;
+  server.get('/:pid',  async (request, reply) => {
+    let pid = request.params.pid || 1;
 
-    const products = db('sdc').collection('products')
-    await products.findOne({ _id: pid }, (err, data) => {
+    const products = await db('sdc').collection('products');
+    return products.findOne({ _id: parseInt(pid) }, (err, data) => {
       if (err) {
         return err;
       } else if (data) {
-        console.log(data);
-        let product = data;
-        product.currentProductId = data._id;
-        delete product._id;
-        return product;
+        reply.send(data);
       }
     });
   });
 
-  server.get('/related/:pid', async (req, res) => {
-    let pid = req.params.pid || 1;
+  server.get('/related/:pid', async (request, reply) => {
+    let pid = request.params.pid || 1;
 
     const db = server.mongo.db
     db().collection('products', onCollection)
@@ -36,8 +32,8 @@ module.exports = async (server, options) => {
     }
   });
 
-  server.put('/cart', async (req, res) => {
-    let skus = req.body;
+  server.put('/cart', async (request, reply) => {
+    let skus = request.body;
     let skusArray = [];
 
     for (let sku in skus) {

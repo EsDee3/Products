@@ -1,10 +1,10 @@
 const postgres = require('postgres');
-// const auth = require('./../../db.config.js');
+
 const options = {
   database: 'sdc'
 };
 
-const sql = postgres(options);
+module.exports = postgres(options);
 
 // const test = async () => {
 
@@ -22,5 +22,3 @@ const sql = postgres(options);
 // };
 
 // test();
-
-module.exports = sql;
