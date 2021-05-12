@@ -28,7 +28,7 @@ module.exports = async (server, options) => {
     let skus = req.body;
 
     try {
-      return await pgController.updateCart(skus)
+      return await pgController.updateInventory(skus)
     } catch (err) {
       server.log.error(err)
       return err

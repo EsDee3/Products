@@ -26,7 +26,25 @@ module.exports = {
     })
   },
 
-  updateCart: async (skus) => {
+  updateInventory: async (skus) => {
+    // let cart = [];
+
+    // for (let sku in skus) {
+    //   let obj = {
+    //     sku: sku,
+    //     quantity: skus[sku]
+    //   };
+    //   cart.push(obj);
+    // }
+
+    // try {
+    //   return await query.updateInventory(cart);
+    // } catch (err) {
+    //   console.log(err);
+    //   return err;
+    // }
+
+
     let skusArray = [];
     let newQty = skus;
     for (let sku in skus) {

@@ -56,8 +56,7 @@ module.exports = {
           FROM features f
           WHERE f.pid = pr.pid
         ) features ON true
-      ), product_fnl AS (
-        SELECT
+      ) SELECT
           pid AS currentProductId,
           product,
           styles
@@ -85,12 +84,10 @@ module.exports = {
           FROM styles_agg sa
           WHERE sa.pid = p.pid
         ) styles ON true
-      ) SELECT json_agg(pf.*)
-      FROM product_fnl pf
-      WHERE pf.currentProductId = ${pid}
+        WHERE pid = ${pid}
       `;
 
-      return productData.json_agg[0];
+      return productData;
     } catch (err) {
       console.log('getProduct', err);
       return;
@@ -220,13 +217,29 @@ module.exports = {
     return currentQty;
   },
 
-  updateInventory: async (cartArray) => {
+  updateInventory: async (cart) => {
+    // console.log(cart);
+    // try {
+    //   await sql`
+    //   UPDATE skus AS s
+    //   SET quantity = quantity - c.qty
+    //   FROM (
+    //     unnest(${sql.array(cart)})
+    //   AS c(sku, qty)
+    //   WHERE s.sku = c.sku;
+    // `;
+    // } catch (err) {
+    //   console.log(err);
+    //   return err;
+    // }
+
+    // return `${cart.length} sku quantities updates`;
     let count = 0;
     try {
-      for (let i = 0; i < cartArray.length; i++) {
+      for (let i = 0; i < cart.length; i++) {
         await sql`
-          UPDATE skus SET ${sql(cartArray[i], 'quantity')}
-          WHERE sku=${cartArray[i].sku}
+          UPDATE skus SET ${sql(cart[i], 'quantity')}
+          WHERE sku=${cart[i].sku}
         `;
         count++;
       }

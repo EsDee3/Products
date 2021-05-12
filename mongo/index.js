@@ -1,46 +1,29 @@
-const fastify = require('fastify')({ logger: false });
-
-fastify.register(require('fastify-mongodb'), {
-  // force to close the mongodb connection when app stopped
-  // the default value is false
-  forceClose: true,
-
-  url: 'mongodb://localhost:27017/sdc'
-})
+const { db } = require('./db');
 
 module.exports = async (server, options) => {
-  server.register(require('fastify-mongodb'), {
-    // force to close the mongodb connection when app stopped
-    // the default value is false
-    forceClose: true,
-
-    url: 'mongodb://localhost:27017/sdc'
-  });
-
 
   server.get('/:pid',  async (req, res) => {
     let pid = req.params.pid || 1;
 
-    const db = fastify.mongo.db
-    db.collection('products', onCollection)
-
-    const onCollection = (err, col) => {
-      if (err) return reply.send(err);
-
-      col.findOne({ _id: pid }, (err, data) => {
+    const products = db('sdc').collection('products')
+    await products.findOne({ _id: pid }, (err, data) => {
+      if (err) {
+        return err;
+      } else if (data) {
+        console.log(data);
         let product = data;
         product.currentProductId = data._id;
         delete product._id;
-        reply.send(product)
-      })
-    }
+        return product;
+      }
+    });
   });
 
   server.get('/related/:pid', async (req, res) => {
     let pid = req.params.pid || 1;
 
-    const db = fastify.mongo.db
-    db.collection('products', onCollection)
+    const db = server.mongo.db
+    db().collection('products', onCollection)
 
     const onCollection = (err, col) => {
       if (err) return reply.send(err);
@@ -53,7 +36,7 @@ module.exports = async (server, options) => {
     }
   });
 
-  server.put('cart', async (req, res) => {
+  server.put('/cart', async (req, res) => {
     let skus = req.body;
     let skusArray = [];
 
@@ -62,7 +45,7 @@ module.exports = async (server, options) => {
     }
 
     try {
-      const db = fastify.mongo.db
+      const db = server.mongo.db
       db.collection('products', onCollection)
 
       const onCollection = (err, col) => {
