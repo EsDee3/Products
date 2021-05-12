@@ -1,4 +1,4 @@
-require('newrelic');
+const newrelic = require('newrelic');
 
 const fastify = require('fastify');
 const autoload = require('fastify-autoload');

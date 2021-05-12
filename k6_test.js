@@ -10,7 +10,7 @@ export const options = {
       timeUnit: '1s',
       duration: '30s',
       preAllocatedVUs: 100,
-      maxVUs: 200
+      maxVUs: 500
     }
   }
   // stages: [
