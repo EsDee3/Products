@@ -18,7 +18,7 @@ module.exports = {
     try {
       ctx.body = await model.getRelatedData(pid)
     } catch (err) {
-      server.log.error(err)
+      console.error(err)
       return err
     }
   },
@@ -29,7 +29,7 @@ module.exports = {
     try {
       ctx.body = await model.updateInventory(skus)
     } catch (err) {
-      server.log.error(err)
+      console.error(err)
       return err
     }
   }

@@ -10,7 +10,7 @@ const pgController = require('./postgres');
 const mgController = require('./mongo');
 const npController = require('./node-pg');
 
-const controller = mgController; // CHANGE THIS TO CHANGE DB
+const controller = npController; // CHANGE THIS TO CHANGE DB
 
 const router = require('@koa/router')();
 
@@ -23,6 +23,7 @@ router
 
 app.use(router.routes());
 
+// CONNECT APP //////////////////////////////////
 if (controller === mgController) {
 
   mgClient.connect('mongodb://localhost:27017/', (err) => {
