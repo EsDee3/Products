@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 
 module.exports = new Pool({
   database: 'sdc',
-  max: 2000,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000
+  // max: 2000,
+  // idleTimeoutMillis: 0,
+  // connectionTimeoutMillis: 0
 })

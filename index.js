@@ -10,13 +10,15 @@ const pgController = require('./postgres');
 const mgController = require('./mongo');
 const npController = require('./node-pg');
 
-const controller = npController; // CHANGE THIS TO CHANGE DB
+const controller = mgController; // CHANGE THIS TO CHANGE DB
 
 const router = require('@koa/router')();
 
 // ROUTES ///////////////////////////////////////
 router
-  .get('/:pid', controller.getProductObj)
+  .get('/pg/:pid', pgController.getProductObj)
+  .get('/mg/:pid', mgController.getProductObj)
+  .get('/np/:pid', npController.getProductObj)
   .get('/related/:pid', controller.getRelatedArray)
   .put('/cart', controller.updateSkuQty);
 

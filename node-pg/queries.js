@@ -85,15 +85,15 @@ module.exports = {
 
   getProduct: async (pid) => {
 
-    const client = await pool.connect();
+    // const client = await pool.connect();
 
     try {
-      let { rows } = await client.query(prodQuery, [pid]);
-      client.release();
+      let { rows } = await pool.query(prodQuery, [pid]);
+      // client.release();
       return rows[0];
     } catch (err) {
-      console.log('getProduct', err.stack);
-      client.release();
+      console.log('getProduct', err);
+      // client.release();
       return;
     }
   },

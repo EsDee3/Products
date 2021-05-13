@@ -7,7 +7,7 @@ module.exports = {
     try {
       ctx.body = await model.getOverviewData(pid)
     } catch (err) {
-      server.log.error(err)
+      console.error(err)
       return err
     }
   },
