@@ -1,57 +1,29 @@
-require('newrelic');
+const newrelic = require('newrelic');
 
-const fastify = require('fastify');
-const autoload = require('fastify-autoload');
-const path = require('path');
+const Koa = require('koa');
+const app = new Koa();
 
-const mgClient = require('./mongo/db');
+const pgPool = require('./postgres/db');
 
-const pgRoutes = './postgres';
-const mgRoutes = './mongo';
+const controller = require('./postgres');
 
-const routes = pgRoutes; // CHANGE THIS TO CHANGE DB
+const router = require('@koa/router')();
 
-const server = fastify({logger: false});
+// ROUTES ///////////////////////////////////////
+router
+  .get('/:pid', controller.getProductObj)
+  .get('/related/:pid', controller.getRelatedArray)
+  .put('/cart', controller.updateSkuQty);
 
-server.register(autoload, {
-  dir: path.join(__dirname, routes)
-});
 
-// server.register(require('fastify-mongodb'), {
-//   // force to close the mongodb connection when app stopped
-//   // the default value is false
+app.use(router.routes());
 
-//   url: 'mongodb://localhost:27017/sdc'
-// });
-if (routes === mgRoutes) {
+// CONNECT APP //////////////////////////////////
 
-  mgClient.connect('mongodb://localhost:27017/', (err) => {
-    if (err) {
-      console.log('Unable to connect to Mongo.');
-      process.exit(1);
-    } else {
-      console.log('Mongo connected');
-
-      server.listen(7763, (err) => {
-        if (err) {
-          server.log.error(err);
-          console.log(err);
-          process.exit(1);
-        }
-        server.log.info('Server Started');
-      })
-    }
-  });
-
-} else {
-
-  server.listen(7763, (err) => {
-    if (err) {
-      server.log.error(err);
-      console.log(err);
-      process.exit(1);
-    }
-    server.log.info('Server Started');
-  })
-
+try {
+  app.listen(7763);
+  console.log('listening on port 7763');
+} catch {
+  console.log(err);
+    process.exit(1);
 }
