@@ -3,7 +3,7 @@ const pgController = require('./controllers')
 module.exports = async (server, options) => {
   server.get('/loaderio-5779d20823431a33bac90cec76680362', async (req, res) => {
     return 'loaderio-5779d20823431a33bac90cec76680362';
-  }
+  });
 
   server.get('/:pid', async (req, res) => {
     let pid = req.params.pid || 1;

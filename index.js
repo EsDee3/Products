@@ -13,7 +13,7 @@ server.register(autoload, {
   dir: path.join(__dirname, routes)
 });
 
-server.listen(7763, (err) => {
+server.listen(3000, (err) => {
   if (err) {
     server.log.error(err);
     console.log(err);
