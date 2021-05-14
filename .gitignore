@@ -4,3 +4,8 @@ db.config.js
 
 /misc
 
+.pgpass
+
+.env
+
+package-lock.json

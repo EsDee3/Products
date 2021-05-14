@@ -1,6 +1,10 @@
 const pgController = require('./controllers')
 
 module.exports = async (server, options) => {
+  server.get('loader', async (req, res) => {
+    return 'loader';
+  }
+
   server.get('/:pid', async (req, res) => {
     let pid = req.params.pid || 1;
 
