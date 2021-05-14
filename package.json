@@ -19,6 +19,7 @@
   "homepage": "https://github.com/EsDee3/Products#readme",
   "dependencies": {
     "@koa/router": "^10.0.0",
+    "dotenv": "^9.0.2",
     "koa": "^2.13.1",
     "koa-router": "^10.0.0",
     "newrelic": "^7.3.1",

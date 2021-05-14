@@ -7,3 +7,5 @@ db.config.js
 Archive.zip
 
 .pgpass
+
+.env

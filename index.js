@@ -1,4 +1,5 @@
 const newrelic = require('newrelic');
+const dotenv = require('dotenv').config();
 
 const Koa = require('koa');
 const app = new Koa();
@@ -21,8 +22,8 @@ app.use(router.routes());
 // CONNECT APP //////////////////////////////////
 
 try {
-  app.listen(7763);
-  console.log('listening on port 7763');
+  app.listen(3000);
+  console.log('listening on port 3000');
 } catch {
   console.log(err);
     process.exit(1);
