@@ -2,7 +2,10 @@ const MongoClient = require('mongodb').MongoClient;
 const { Pool } = require('pg')
 const Cursor = require('pg-cursor')
 
-const url = 'mongodb://localhost:27017';
+const username = encodeURIComponent(process.env.MGUSER);
+const password = encodeURIComponent(process.env.MGPASS);
+const authMech = 'SCRAM-SHA-256';
+const url = `mongodb://localhost:27017/`;
 const dbName = 'sdc';
 
 const relatedQuery = `
