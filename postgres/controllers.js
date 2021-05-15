@@ -25,7 +25,7 @@ module.exports = {
     } catch (err) {
       return err
     }
-  }
+  },
 
   updateInventory: async (skus) => {
     // let cart = [];
