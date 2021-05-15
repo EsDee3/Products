@@ -27,6 +27,17 @@ module.exports = async (server, options) => {
     }
   });
 
+  server.get('/related/products/:pid', async (req, res) => {
+    let pid = req.params.pid || 1;
+
+    try {
+      return await pgController.getRelatedProds(pid)
+    } catch (err) {
+      server.log.error(err)
+      return err
+    }
+  });
+
   server.put('/cart', async (req, res) => {
     let skus = req.body;
 

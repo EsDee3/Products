@@ -19,9 +19,12 @@ module.exports = {
     }
   },
 
-  getRelatedProds: async (relatedArray) => {
+  getRelatedProds: async (pid) => {
     try {
-      return await query.getArrayProducts(relatedArray)
+      return await query.getRelated(pid)
+        .then(async (relatedArray) => {
+          return await query.getArrayProducts(relatedArray);
+        })
     } catch (err) {
       return err
     }

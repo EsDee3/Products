@@ -114,7 +114,7 @@ module.exports = {
     let queryString = relatedArray.toString();
 
     try {
-      let [ productData ] = await sql`
+      let productData = await sql`
       WITH styles_agg AS (
         SELECT
           pid,
@@ -166,8 +166,7 @@ module.exports = {
           FROM features f
           WHERE f.pid = pr.pid
         ) features ON true
-      ), product_fnl AS (
-        SELECT
+      ) SELECT
           pid AS currentProductId,
           product,
           styles
@@ -195,11 +194,9 @@ module.exports = {
           FROM styles_agg sa
           WHERE sa.pid = p.pid
         ) styles ON true
-      ) SELECT json_agg(pf.*)
-      FROM product_fnl pf
-      WHERE currentProductId IN (${relatedArray})
+        WHERE pid IN (${relatedArray})
       `;
-      return productData.json_agg;
+      return productData;
     } catch (err) {
       console.log('getArrayProducts', err);
       return;
