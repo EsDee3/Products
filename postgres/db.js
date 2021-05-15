@@ -1,24 +1,11 @@
 const postgres = require('postgres');
 
 const options = {
-  database: 'sdc'
+  host: process.env.HOST,
+  port: 5432,
+  database: 'sdc',
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD
 };
 
 module.exports = postgres(options);
-
-// const test = async () => {
-
-//   const [ test ] = await sql`
-//     SELECT pid, name FROM products WHERE pid=1
-//   `;
-//   try {
-//     if (test) {
-//       console.log(test);
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return;
-//   }
-// };
-
-// test();

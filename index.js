@@ -1,59 +1,147 @@
 const newrelic = require('newrelic');
+const dotenv = require('dotenv').config();
 
 const fastify = require('fastify');
 const autoload = require('fastify-autoload');
 const path = require('path');
 
 const mgClient = require('./mongo/db');
-const pgPool = require('./postgres/db');
-
-const pgRoutes = './postgres';
-const mgRoutes = './mongo';
-const npRoutes = './node-pg';
-
-const routes = npRoutes; // CHANGE THIS TO CHANGE DB
-
 const server = fastify({logger: false});
 
-server.register(autoload, {
-  dir: path.join(__dirname, routes)
+// LOADER.IO ////////////////////////////////////
+server.get('/loaderio-5779d20823431a33bac90cec76680362/', async (req, res) => {
+  return 'loaderio-5779d20823431a33bac90cec76680362';
 });
 
-// server.register(require('fastify-mongodb'), {
-//   // force to close the mongodb connection when app stopped
-//   // the default value is false
+// POSTGRES ROUTES ////////////////////////////
+const pgController = require('./postgres/controllers');
 
-//   url: 'mongodb://localhost:27017/sdc'
-// });
-if (routes === mgRoutes) {
+server.get('/pg/:pid', async (req, res) => {
+  let pid = req.params.pid || 1;
 
-  mgClient.connect('mongodb://localhost:27017/', (err) => {
-    if (err) {
-      console.log('Unable to connect to Mongo.');
-      process.exit(1);
-    } else {
-      console.log('Mongo connected');
+  try {
+    return await pgController.getOverviewData(pid)
+  } catch (err) {
+    server.log.error(err)
+    return err
+  }
+});
 
-      server.listen(7763, (err) => {
-        if (err) {
-          server.log.error(err);
-          console.log(err);
-          process.exit(1);
-        }
-        server.log.info('Server Started');
-      })
+server.get('/pg/related/:pid', async (req, res) => {
+  let pid = req.params.pid || 1;
+
+  try {
+    return await pgController.getRelatedData(pid)
+  } catch (err) {
+    server.log.error(err)
+    return err
+  }
+});
+
+server.get('/pg/related/products/:pid', async (req, res) => {
+  let pid = req.params.pid || 1;
+
+  try {
+    return await pgController.getRelatedProds(pid)
+  } catch (err) {
+    server.log.error(err)
+    return err
+  }
+});
+
+server.put('/pg/cart', async (req, res) => {
+  let skus = req.body;
+
+  try {
+    return await pgController.updateInventory(skus)
+  } catch (err) {
+    server.log.error(err)
+    return err
+  }
+});
+
+// MONGO ROUTES ///////////////////////////////
+const { db } = require('./mongo/db');
+
+server.get('/mg/:pid',  async (request, reply) => {
+  let pid = request.params.pid || 1;
+
+  try {
+
+  const products = await db('sdc').collection('products');
+  return await products.findOne({ _id: parseInt(pid) });
+
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+});
+
+server.get('/mg/related/:pid', async (request, reply) => {
+  let pid = request.params.pid || 1;
+
+  const query = { _id: parseInt(pid) };
+  const options = {
+    projection: { _id: 0, related: 1 }
+  }
+
+  try {
+
+    const products = await db('sdc').collection('products');
+    const { related } = await products.findOne(query, options);
+    return related;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+});
+
+server.put('/mg/cart', async (request, reply) => {
+  let skus = request.body;
+  let skusArray = [];
+
+  for (let sku in skus) {
+    skusArray.push(sku);
+  }
+
+  try {
+    db.collection('products', onCollection)
+
+    const onCollection = (err, col) => {
+      if (err) return reply.send(err);
+
+      col
+        .find({ 'styles.skus.sku': {$all: skusArray} }, getNewQty)
     }
-  });
 
-} else {
+    const getNewQty = (err, data) => {
+      if (err) return reply.send(err);
 
-  server.listen(7763, (err) => {
-    if (err) {
+      // GET DIFFERENCE AND
+      reply.send('OK');
+    }
+
+  } catch (err) {
+    server.log.error(err)
+    return err
+  }
+});
+
+// CONNECT TO MONGO & START SERVER //////////////
+mgClient.connect('mongodb://localhost:27017/', async (err) => {
+  if (err) {
+    console.log('Unable to connect to Mongo.');
+    process.exit(1);
+  } else {
+    console.log('Mongo connected');
+
+    try {
+      await server.listen(3000, '0.0.0.0');
+      server.log.info('Server Started');
+    } catch (err) {
       server.log.error(err);
       console.log(err);
       process.exit(1);
     }
-    server.log.info('Server Started');
-  })
-
-}
+  }
+});

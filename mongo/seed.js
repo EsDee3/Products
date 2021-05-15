@@ -66,8 +66,10 @@ const prodQuery = `WITH styles_agg AS (
   ) features ON true
 ) SELECT
     pid AS _id,
+    pid AS currentProductId,
     product,
-    styles
+    styles,
+    related
   FROM products p
   LEFT JOIN LATERAL (
     SELECT json_build_object(
@@ -92,6 +94,11 @@ const prodQuery = `WITH styles_agg AS (
     FROM styles_agg sa
     WHERE sa.pid = p.pid
   ) styles ON true
+  LEFT JOIN LATERAL (
+    SELECT array_agg(related_id) AS related
+  FROM related r
+  WHERE r.pid = p.pid
+  ) related ON true
 `;
 
 (async function() {
@@ -124,7 +131,7 @@ const prodQuery = `WITH styles_agg AS (
           readToEnd(cursor, collection);
         } else {
           cursor.close();
-          if (collection = 'products') {
+          if (collection === 'products') {
             await db.collection('products').createIndex([{'styles.style_id': 1}, {'styles.skus.sku': 1}])
           }
           let end = Date.now();
@@ -136,7 +143,7 @@ const prodQuery = `WITH styles_agg AS (
     }
 
     await readToEnd(prodCursor, 'products');
-    await readToEnd(relatedCursor, 'related');
+    // await readToEnd(relatedCursor, 'related');
     return;
 
   } catch (err) {
