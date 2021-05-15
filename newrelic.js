@@ -9,7 +9,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name: ['sdc_products'],
+  app_name: ['sdc_products_fastify'],
   /**
    * Your New Relic license key.
    */
