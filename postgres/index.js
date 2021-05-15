@@ -23,6 +23,17 @@ module.exports = {
     }
   },
 
+  getRelatedProds: async ctx => {
+    let pid = ctx.params.pid || 1;
+
+    try {
+      ctx.body = await model.getRelatedProds(pid)
+    } catch (err) {
+      server.log.error(err)
+      return err
+    }
+  },
+
   updateSkuQty: async ctx => {
     let skus = ctx.request.body;
 

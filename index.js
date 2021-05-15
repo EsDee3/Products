@@ -1,4 +1,5 @@
 const newrelic = require('newrelic');
+const dotenv = require('dotenv').config();
 
 const Koa = require('koa');
 const app = new Koa();
@@ -15,6 +16,7 @@ router
   })
   .get('/:pid', controller.getProductObj)
   .get('/related/:pid', controller.getRelatedArray)
+  .get('/related/products/:pid', controller.getRelatedProds)
   .put('/cart', controller.updateSkuQty);
 
 
