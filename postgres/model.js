@@ -12,6 +12,10 @@ module.exports = {
   },
 
   getRelatedData: async (pid) => {
+    return await query.getRelated(pid);
+  },
+
+  getRelatedProds: async (pid) => {
     return await query.getRelated(pid)
     .then( async relatedArray => {
       if (relatedArray) {
