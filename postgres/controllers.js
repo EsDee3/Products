@@ -12,19 +12,20 @@ module.exports = {
   },
 
   getRelatedData: async (pid) => {
-    return await query.getRelated(pid)
-    .then( async relatedArray => {
-      if (relatedArray) {
-        return await query.getArrayProducts(relatedArray)
-      }
-      else {
-        return null
-      }
-    })
-    .catch( err => {
-      console.log('getRelatedData', err)
-    })
+    try {
+      return await query.getRelated(pid)
+    } catch (err) {
+      return err
+    }
   },
+
+  getRelatedProds: async (relatedArray) => {
+    try {
+      return await query.getArrayProducts(relatedArray)
+    } catch (err) {
+      return err
+    }
+  }
 
   updateInventory: async (skus) => {
     // let cart = [];

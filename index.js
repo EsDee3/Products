@@ -9,15 +9,23 @@ const routes = './postgres'; // CHANGE THIS TO CHANGE DB
 
 const server = fastify({logger: false});
 
+server.register(require('fastify-cors'), {
+  origin: true
+})
+
 server.register(autoload, {
   dir: path.join(__dirname, routes)
 });
 
-server.listen(3000, (err) => {
-  if (err) {
+const start = async () => {
+
+  try {
+    await server.listen(3000, '0.0.0.0');
+    server.log.info('Server Started');
+  } catch (err) {
     server.log.error(err);
-    console.log(err);
-    process.exit(1);
+      console.log(err);
+      process.exit(1);
   }
-  server.log.info('Server Started');
-})
+};
+start();
