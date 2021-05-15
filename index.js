@@ -66,10 +66,15 @@ const { db } = require('./mongo/db');
 server.get('/mg/:pid',  async (request, reply) => {
   let pid = request.params.pid || 1;
 
+  const query = { _id: parseInt(pid) };
+  const options = {
+    projection: { _id: 0, related: 0 }
+  }
+
   try {
 
   const products = await db('sdc').collection('products');
-  return await products.findOne({ _id: parseInt(pid) });
+  return await products.findOne(query, options);
 
   } catch (err) {
     console.log(err);
