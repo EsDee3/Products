@@ -136,17 +136,16 @@ server.put('/mg/cart', async (request, reply) => {
 mgClient.connect('mongodb://localhost:27017/', async (err) => {
   if (err) {
     console.log('Unable to connect to Mongo.');
-    process.exit(1);
   } else {
     console.log('Mongo connected');
+  }
 
-    try {
-      await server.listen(3000, '0.0.0.0');
-      server.log.info('Server Started');
-    } catch (err) {
-      server.log.error(err);
-      console.log(err);
-      process.exit(1);
-    }
+  try {
+    await server.listen(3000, '0.0.0.0');
+    server.log.info('Server Started');
+  } catch (err) {
+    server.log.error(err);
+    console.log(err);
+    process.exit(1);
   }
 });
